@@ -45,6 +45,17 @@ public class MyStreamTest {
     }
 
     /**
+     * map用于Object, 通用方法
+     */
+    @Test
+    public void testMap() {
+        int sum = tasks.stream().map(Task::getPoints).mapToInt(obj->{return (Integer)obj;}).sum();
+        System.out.println(sum);
+        //不推荐上面的方法,直接使用mapToInt即可，这里只是为了做例子
+    }
+    
+
+    /**
      * 并行处理
      * 需要说明的是被处理的对象之间是没有关系可独立运行业务逻辑的数据
      */
