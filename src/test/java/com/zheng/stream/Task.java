@@ -9,12 +9,17 @@ public class Task {
         OPEN, CLOSED;
     }
     
+    private String name;
     private Status status;
     private Integer points;
 
-    public Task(Status status, Integer points) {
+    public Task() {
+    }
+    
+    public Task(Status status, Integer points, String name) {
         this.status = status;
         this.points = points;
+        this.name = name;
     }
 
     public Status getStatus() {
@@ -31,6 +36,14 @@ public class Task {
 
     public void setPoints(Integer points) {
         this.points = points;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Override

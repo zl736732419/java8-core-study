@@ -11,9 +11,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.time.Clock;
+import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -28,14 +28,24 @@ import java.util.stream.Stream;
 public class MyStreamTest {
     private List<Task> tasks = Lists.newArrayList();
     
+    private List<Integer> nums = Lists.newArrayList();
+    
+    
     @Before
     public void init() {
-        Task task = new Task(Task.Status.OPEN, 25);
+        Task task = new Task(Task.Status.OPEN, 25, "1");
         tasks.add(task);
-        task = new Task(Task.Status.OPEN, 15);
+        task = new Task(Task.Status.OPEN, 15, "2");
         tasks.add(task);
-        task = new Task(Task.Status.CLOSED, 8);
+        task = new Task(Task.Status.CLOSED, 8, "3");
         tasks.add(task);
+        
+        nums.add(1);
+        nums.add(3);
+        nums.add(2);
+        nums.add(4);
+        nums.add(0);
+        
     }
 
 
@@ -102,6 +112,11 @@ public class MyStreamTest {
                 .mapToObj(percentage -> percentage + "%")
                 .collect(Collectors.toList());
         System.out.println(result);
+        
+        System.out.println("to map: ");
+        Map<String, Integer> map = tasks.stream().collect(Collectors.toMap(task->task.getName(), task->task.getPoints()));
+        System.out.println(map);
+        
     }
     
     @Test
@@ -113,5 +128,40 @@ public class MyStreamTest {
             e.printStackTrace();
         }
     }
+    
+    @Test
+    public void testSort() {
+        nums.sort(Comparator.<Integer>comparingInt(Integer::valueOf).reversed());
+        System.out.println(nums);
+    }
+    
+    @Test
+    public void testFilter() {
+        List<Integer> result = nums.stream().filter(i -> i > 1).map(Integer::valueOf).sorted((a, b)->b.compareTo(a)).collect(Collectors.toList());
+        System.out.println(result);
+    }
+    
+    @Test
+    public void testParallelStream() {
+        List<Integer> result = nums.parallelStream().filter(i -> i > 1).sorted().collect(Collectors.toList());
+        System.out.println(result);
+    }
+    
+    @Test
+    public void compareTwoStream() {
+        Integer[] counts = new Integer[100];
+        Arrays.parallelSetAll(counts, index -> ThreadLocalRandom.current().nextInt(100) + 1);
+        List<Integer> list = Arrays.stream(counts).collect(Collectors.toList());
+        long start = Clock.systemUTC().millis();
+        list.stream().filter(i -> i > 1).sorted();
+        System.out.println("time: " + (Clock.systemUTC().millis() - start) + " ms"); //2ms
+
+        start = Clock.systemUTC().millis();
+        list.parallelStream().filter(i -> i > 1).sorted();
+        System.out.println("time: " + (Clock.systemUTC().millis() - start) + " ms"); //0ms
+        
+    }
+    
+    
     
 }
