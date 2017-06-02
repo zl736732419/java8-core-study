@@ -25,6 +25,23 @@ public class OptionalStudyTest {
         System.out.println("First Name: " + optional.orElseGet(()->"[none]"));
         System.out.println(optional.map(s->"Hey " + s).orElse("Hey Stranger"));
     }
+
+    /**
+     * map: java8自动封装结果
+     * flatMap: 需要手动封装结果值为Optional
+     */
+    @Test
+    public void mapOrFlatMap() {
+        String string = null;
+        
+        String result = Optional.ofNullable(string).map(value -> value.toUpperCase()).orElse("null");
+        System.out.println(result);
+        
+        result = Optional.ofNullable(string).flatMap(value -> Optional.of(value.toUpperCase())).orElse("null");
+        System.out.println(result);
+        
+        
+    }
     
     
 

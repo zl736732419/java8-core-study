@@ -35,15 +35,6 @@ public class MethodRefTest {
     }
 
     /**
-     * 特定了类的任意实例方法
-     * 这个方法没有参数，使用this指向当前对象
-     */
-    @Test
-    public void testClassMethod() {
-        cars.forEach(Car::repair);
-    }
-
-    /**
      * 实例的实例方法
      * 需要接受一个类对象参数
      */
@@ -52,5 +43,15 @@ public class MethodRefTest {
         Car car = Car.create(Car::new);
         cars.forEach(car::follow);
     }
+    
+    /**
+     * 特定了类的任意实例方法
+     * 这个方法没有参数，使用this指向当前对象
+     */
+    @Test
+    public void testClassMethod() {
+        cars.forEach(Car::repair);
+    }
+
     
 }

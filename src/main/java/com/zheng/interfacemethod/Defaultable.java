@@ -18,6 +18,11 @@ public interface Defaultable {
     static Defaultable create(Supplier<Defaultable> supplier) {
         return supplier.get();
     }
+
+    /**
+     * 静态方法
+     */
+    static void sayHello() {System.out.println("hello");}
     
     /**
      * 接口的默认实现方法
