@@ -45,6 +45,8 @@ public class MyStreamTest {
         nums.add(2);
         nums.add(4);
         nums.add(0);
+        nums.add(0);
+        nums.add(0);
     }
 
 
@@ -170,6 +172,97 @@ public class MyStreamTest {
         result.stream().forEach(a->System.out.println(a));
     }
     
+    /////////////////////////////////////////////////////////////////创建stream
+    
+    @Test
+    public void createStream() {
+        //1
+        List<String> list = Stream.of("hello").collect(Collectors.toList());
+        System.out.println(list);
+        
+        //2
+        List<Integer> nums = Stream.of(1,2,3,4).collect(Collectors.toList());
+        System.out.println(nums);
+        
+        //3,注意使用limit防止无限打印
+        Stream.generate(()->ThreadLocalRandom.current().nextInt(10)+1).limit(10).forEach(a->System.out.println(a));
+        
+        
+        //4,iterate 注意使用limit防止无限打印 result: [1,2,3,4,5,6,7,8,9,10]
+        Stream.iterate(1, item->item+1).limit(10).forEach(a->System.out.println(a));
+        
+        //5,通过集合生成
+        nums.stream().forEach(num->System.out.println(num));
+    }
+    
+    /////////////////////////////////////////////////////////////////////转换stream
     
     
+    @Test
+    public void testDistinct() {
+        List<Integer> result = nums.stream().distinct().collect(Collectors.toList());
+        System.out.println(result);
+    }
+    
+    @Test
+    public void testFilter1() {
+        nums.stream().filter(a->a>1).forEach(s->System.out.println(s));
+    }
+
+    /**
+     * 注意使用Stream.collect()这才不会有问题
+     * IntStream/LongStream.collect会报错，可以通过boxed()将其转换为Stream
+     */
+    @Test
+    public void testMap1() {
+        List<Long> result = nums.stream().map(num->Long.parseLong(num+"")).collect(Collectors.toList());
+        System.out.println(result);
+        
+        result = nums.stream().mapToLong(a->Long.parseLong(a+"")).boxed().collect(Collectors.toList());
+        System.out.println(result);
+    }
+
+    /**
+     * collect(
+     * supplier, 工厂函数，用来生成一个新的容器
+     * accumular, 收集容器，将集合中的元素加入到中间容器中
+     * combiner 用来把中间状态的多个容器结合成最后的结果容器
+     * 当然还可以使用上面的简单方式
+     * )语法
+     */
+    @Test
+    public void testCollect() {
+        List<Long> result = nums.stream().mapToLong(a->Long.parseLong(a+"")).collect(()->new ArrayList<Long>(), 
+                (list, item)->list.add(item), (list1, list2) -> list1.addAll(list2));
+        System.out.println(result);
+    }
+    
+    @Test
+    public void testFlatMap() {
+        List<Integer> points = tasks.stream().mapToInt(Task::getPoints).boxed().collect(Collectors.toList());
+        
+        //合并collection,采用flatMap合并集合时不会new出新的集合，
+        List<Integer> result = Stream.of(points, nums).flatMap(a->a.stream()).sorted().collect(Collectors.toList());
+        System.out.println(result);
+    }
+    
+    @Test
+    public void testReduce() {
+        int result = nums.stream().reduce(0, (sum, num) -> sum+num); // 0 是用来启动reduce的
+        System.out.println(result);
+    }
+
+    /**
+     * peek会复制原集合中的元素产生新的集合，并针对每一个元素执行consumer操作
+     */
+    @Test
+    public void testPeek() {
+        nums.stream().peek(a->System.out.println(a));
+        nums.stream().peek(System.out::print);
+    }
+    
+    @Test
+    public void testSkip() {
+        nums.stream().skip(4).forEach(s->System.out.println(s));
+    }
 }
