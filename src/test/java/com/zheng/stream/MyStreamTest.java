@@ -45,7 +45,6 @@ public class MyStreamTest {
         nums.add(2);
         nums.add(4);
         nums.add(0);
-        
     }
 
 
@@ -160,6 +159,15 @@ public class MyStreamTest {
         list.parallelStream().filter(i -> i > 1).sorted();
         System.out.println("time: " + (Clock.systemUTC().millis() - start) + " ms"); //0ms
         
+    }
+    
+    @Test
+    public void testCount() {
+        long count = nums.stream().filter(a -> a>1).count();
+        System.out.println("count: " + count);
+        
+        List<Integer> result = nums.stream().filter(a->a>1).collect(Collectors.toList());
+        result.stream().forEach(a->System.out.println(a));
     }
     
     
