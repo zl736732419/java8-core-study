@@ -241,15 +241,26 @@ public class MyStreamTest {
     public void testFlatMap() {
         List<Integer> points = tasks.stream().mapToInt(Task::getPoints).boxed().collect(Collectors.toList());
         
-        //合并collection,采用flatMap合并集合时不会new出新的集合，
+        //合并collection,采用flatMap合并集合时不会new出新的集合，方法语句块返回的还是一个stream
         List<Integer> result = Stream.of(points, nums).flatMap(a->a.stream()).sorted().collect(Collectors.toList());
         System.out.println(result);
     }
-    
+
+    /**
+     * 将存在多个元素的集合转变成一个元素的操作
+     * 可以用于实现sum,max,min等操作
+     * 
+     */
     @Test
     public void testReduce() {
+        // sum 
         int result = nums.stream().reduce(0, (sum, num) -> sum+num); // 0 是用来启动reduce的
-        System.out.println(result);
+        System.out.println("sum: " + result);
+        
+        
+        // max
+        int max = nums.stream().reduce(Integer.MIN_VALUE, Integer::max);
+        System.out.println("max: " + max);
     }
 
     /**
@@ -265,4 +276,46 @@ public class MyStreamTest {
     public void testSkip() {
         nums.stream().skip(4).forEach(s->System.out.println(s));
     }
+
+    /**
+     * 查找集合中是否有匹配条件的元素存在，返回boolean类型结果
+     * 可以通过allMatch,anyMatch,noneMatch方法
+     */
+    @Test
+    public void testMatching() {
+        boolean result = nums.stream().anyMatch(num->num>1);
+        System.out.println(result);
+        
+        result = nums.stream().allMatch(num->num>2);
+        System.out.println(result);
+        
+        result = nums.stream().noneMatch(num->num==0);
+        System.out.println(result);
+        
+    }
+
+    /**
+     * 用于对stream集合中的元素进行检索操作
+     * findFirst查找第一个匹配的元素
+     * findAny返回其中任何一个元素
+     * 
+     */
+    @Test
+    public void testFinding() {
+        Optional<Integer> result = nums.stream().filter(num->num>1).findFirst();
+        System.out.println(result.orElse(-1));
+        
+        result = nums.stream().filter(num->num>1).findAny();
+        System.out.println(result.orElse(-1));
+    }
+    
+    @Test
+    public void toMap() {
+        Map<Integer, Task> map = tasks.stream().collect(Collectors.toMap(Task::getPoints, p->p));
+        System.out.println(map);
+    }
+    
+    
+    
+    
 }

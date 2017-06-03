@@ -11,7 +11,7 @@ public interface Defaultable {
     void sayHello(String str);
 
     /**
-     * 静态方法
+     * 静态方法(可以多个)
      * @param supplier
      * @return
      */
@@ -25,7 +25,7 @@ public interface Defaultable {
     static void sayHello() {System.out.println("hello");}
     
     /**
-     * 接口的默认实现方法
+     * 接口的默认实现方法(可以多个)
      * 但是我们在定义默认方法的时候一定要慎重考虑，是否真的有必要引用默认方法
      * @return
      */
