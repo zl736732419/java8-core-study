@@ -314,6 +314,29 @@ public class MyStreamTest {
         Map<Integer, Task> map = tasks.stream().collect(Collectors.toMap(Task::getPoints, p->p));
         System.out.println(map);
     }
+
+
+    /**
+     * 在使用parallel时需要考虑到被处理的原数据结构，parallel将原数据划分成几个部分供不同的线程使用
+     * 对于数组来说这个结构是很容易划分的，但是对于LinkedList就不容易划分了
+     * 
+     * 使用parallel需要考虑的几点问题：
+     * 1.数据源的分隔性，数组最理想，LinkedList太糟糕
+     * 2.单一元素的处理消耗越大，使用parallel就越能见效果
+     * 3.原生数据类型比对象数据类型更高效，因为原生数据类型占用更低的内存
+     * 4.大容量数据结构效果更佳，因为大容量数据将会被划分成几个部分供多线程并行调用
+     * 5.多核处理
+     * 
+     */
+    @Test
+    public void testParallel1() {
+        nums.parallelStream().forEach(System.out::print);
+    }
+    
+    @Test
+    public void testParallel2() {
+        nums.stream().parallel().forEach(System.out::print);
+    }
     
     
     
